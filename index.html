@@ -177,7 +177,7 @@ footer{font-size:14px;color:var(--muted);border-top:1px solid var(--line);paddin
     <div class="scope" role="group" aria-label="Which projects to show">
       <label class="clubpick" for="myClub">Your club <select id="myClub"></select></label>
       <button class="sbtn" data-scope="mine" aria-pressed="true" id="sbMine">Your club</button>
-      <button class="sbtn" data-scope="all" aria-pressed="false" id="sbAll">Your club + partner clubs</button>
+      <button class="sbtn" data-scope="all" aria-pressed="false" id="sbAll">Your club + other clubs</button>
       <span class="scopehint" id="scopeHint"></span>
     </div>
     <div class="notice" role="note" id="partnerNotice" hidden><span aria-hidden="true">⚠</span><span>Other clubs' projects are gathered from their public websites and newsletters. There is no formal agreement among the clubs, and dates and details have not been confirmed. If a project interests you, contact the host club first to ask whether visiting Rotarians are welcome and to confirm the details.</span></div>
@@ -423,12 +423,12 @@ function applyScope(){
   const mine=allItems.filter(isMine).length, partnerN=allItems.length-mine;
   const full=clubFull(myClub);
   document.getElementById("sbMine").textContent=myClub?full:"Your club";
-  document.getElementById("sbAll").textContent=myClub?full+" + partner clubs":"Your club + partner clubs";
+  document.getElementById("sbAll").textContent=myClub?full+" + other clubs":"Your club + other clubs";
   document.getElementById("sbMine").disabled=!myClub; document.getElementById("sbAll").disabled=!myClub;
   document.querySelectorAll(".sbtn").forEach(b=>b.setAttribute("aria-pressed",String(!!myClub && b.dataset.scope===scope)));
-  document.getElementById("pageTitle").textContent=myClub?full+" and Partner Club Service Activities":"Tucson-Area Rotary Service Activities";
+  document.getElementById("pageTitle").textContent=myClub?full+" and Other Clubs' Service Activities":"Tucson-Area Rotary Service Activities";
   document.getElementById("eyebrow").textContent=myClub?full:"Rotary District 5500 · Tucson area";
-  document.title=myClub?full+" and Partner Club Service":"Tucson-Area Rotary Service Activities";
+  document.title=myClub?full+" and Other Clubs' Service":"Tucson-Area Rotary Service Activities";
   document.getElementById("partnerNotice").hidden=!(scope==="all");
   document.querySelector('[data-dd="pClub"]').parentElement.hidden=(myClub&&scope==="mine");
   document.getElementById("ledeText").textContent= !myClub
@@ -438,8 +438,8 @@ function applyScope(){
       : `${full}'s own service projects, plus service projects that other Tucson-area Rotary clubs list publicly. Click any event or project for the time, place, and who to contact.`;
   const partnerClubs=new Set(allItems.filter(x=>!isMine(x)).map(x=>x.club).filter(k=>k!=="multi"&&k!=="district")).size;
   document.getElementById("scopeHint").textContent= !myClub ? "" :
-    scope==="mine" ? (mine? `Want more ways to serve? Add ${partnerN} projects from ${partnerClubs} partner clubs.` : `No projects are listed for ${full} yet. Add partner clubs to see ${partnerN} projects.`)
-                   : "Partner club projects are marked with their host club.";
+    scope==="mine" ? (mine? `Want more ways to serve? Add ${partnerN} projects from ${partnerClubs} other clubs.` : `No projects are listed for ${full} yet. Add other clubs to see ${partnerN} projects.`)
+                   : "Other clubs' projects are marked with their host club.";
 }
 window.addEventListener("hashchange",()=>{readHash(); scope="mine"; renderAll();});
 let mode="month";
