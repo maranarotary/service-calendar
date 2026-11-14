@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tucson-Area Rotary Service Activities</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+/* Layout idea: header with summary, then month grid (left) + upcoming list (right), then regular-opportunity cards. */
+:root{
+  --bg:#f6f4ef;
+  --surface:#ffffff;
+  --ink:#1d2738;
+  --muted:#5d6776;
+  --line:#dcd8cf;
+  --accent:#1f4e8c;
+  --accent-ink:#ffffff;
+  --gold:#c98a12;
+  --warn-bg:#fbf0d6;
+  --warn-ink:#7a5205;
+  --ok-bg:#e3f2e1;
+  --ok-ink:#25602a;
+  --today:#eef3fb;
+  --font-display:"Fraunces", Georgia, "Times New Roman", serif;
+  --font-body:"Source Sans 3", "Segoe UI", system-ui, -apple-system, sans-serif;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#141a23; --surface:#1c2430; --ink:#e8ebf0; --muted:#a3acb9; --line:#323d4c;
+    --accent:#7fa8e6; --accent-ink:#0f1620; --gold:#e3aa3d;
+    --warn-bg:#3d3018; --warn-ink:#f1cf86; --ok-bg:#1f3a22; --ok-ink:#9fd9a3; --today:#223047;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#141a23; --surface:#1c2430; --ink:#e8ebf0; --muted:#a3acb9; --line:#323d4c;
+  --accent:#7fa8e6; --accent-ink:#0f1620; --gold:#e3aa3d;
+  --warn-bg:#3d3018; --warn-ink:#f1cf86; --ok-bg:#1f3a22; --ok-ink:#9fd9a3; --today:#223047;
+  color-scheme: dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:16px;line-height:1.5}
+.wrap{max-width:1180px;margin:0 auto;padding:28px 20px 48px;display:flex;flex-direction:column;gap:28px}
+header{display:flex;flex-direction:column;gap:10px;border-bottom:3px solid var(--gold);padding-bottom:18px}
+.eyebrow{font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+h1{font-family:var(--font-display);font-size:clamp(28px,4vw,40px);line-height:1.1;margin:0;text-wrap:balance}
+h2{font-family:var(--font-display);font-size:24px;margin:0;text-wrap:balance}
+.lede{max-width:68ch;margin:0;color:var(--muted)}
+.notice{display:flex;gap:10px;align-items:flex-start;background:var(--warn-bg);color:var(--warn-ink);border-radius:8px;padding:10px 14px;max-width:80ch;font-size:15px}
+.meta{font-size:14px;color:var(--muted)}
+.filters{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.filters span.lbl{font-size:14px;color:var(--muted);margin-right:4px}
+.chip{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:5px 12px;font:inherit;font-size:14px;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.chip[aria-pressed="true"]{border-color:var(--ink);font-weight:600}
+.chip .cnt{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.chip:disabled{opacity:.45;cursor:not-allowed}
+.chip.bulk{background:transparent;border-style:dashed;color:var(--accent);font-weight:600}
+.chip.bulk:hover{border-color:var(--accent)}
+.chip:focus-visible,button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.dot{width:10px;height:10px;border-radius:50%;display:inline-block;flex:none}
+.distbar{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;font-size:14px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 14px}
+.distbar label{display:inline-flex;align-items:center;gap:6px;color:var(--ink)}
+.distbar select{font:inherit;font-size:14px;padding:4px 8px;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--ink)}
+.distbar .hint{flex-basis:100%;color:var(--muted);font-size:13px}
+.trav{display:inline-block;font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.tlabel{font-size:14px;color:var(--muted);margin-right:2px}
+.dd{position:relative}
+.ddbtn{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:8px;padding:7px 12px;font:inherit;font-size:14px;cursor:pointer;display:inline-flex;gap:6px;align-items:center}
+.ddbtn:hover{border-color:var(--accent)}
+.ddbtn.on{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 12%,var(--surface));font-weight:600}
+.pop{position:absolute;top:calc(100% + 6px);left:0;z-index:20;background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.15);padding:14px;width:min(560px,calc(100vw - 32px))}
+.pop .lbl{display:none}
+.distpop{display:flex;flex-direction:column;gap:10px;font-size:14px}
+.distpop[hidden],.pop[hidden]{display:none}
+.distpop label{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.distpop select,.zipin{font:inherit;font-size:14px;padding:4px 8px;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--ink)}
+.zipin{width:7.5em}
+.zipmsg{font-size:13px;color:var(--warn-ink)}
+.distpop .hint{color:var(--muted);font-size:13px}
+.distpop .chip.bulk{align-self:flex-start}
+.clearall{border:0;background:transparent;color:var(--accent);font:inherit;font-size:14px;text-decoration:underline;cursor:pointer;padding:4px}
+.countmsg{font-size:14px;color:var(--muted);margin-left:auto}
+@media (max-width:560px){.dd{position:static}.toolbar{position:relative}.pop{left:0;right:0;width:auto}.countmsg{margin-left:0;flex-basis:100%}}
+.main{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(0,1fr);gap:24px;align-items:start}
+@media (max-width:860px){.main{grid-template-columns:1fr}}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px}
+.viewbar{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.vbtn{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:5px 14px;font:inherit;font-size:14px;cursor:pointer}
+.vbtn[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:600}
+.vbtn.today-btn{margin-left:auto}
+.main.wide{grid-template-columns:1fr}
+.minis{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:18px}
+.mini h3{font-family:var(--font-display);font-size:17px;margin:0 0 6px}
+.mgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;font-size:12px;text-align:center;font-variant-numeric:tabular-nums}
+.mgrid .md{color:var(--muted);font-weight:700;font-size:11px}
+.mgrid .mc{padding:3px 0;border-radius:6px;position:relative;color:var(--muted)}
+.mgrid .mc.today{outline:2px solid var(--accent);outline-offset:-2px}
+.mgrid .mc.has{color:var(--ink);font-weight:700;background:color-mix(in srgb,var(--c) 22%,var(--surface));cursor:pointer;border:0;font:inherit;font-size:12px;font-weight:700}
+.mgrid .mc.has:hover{background:color-mix(in srgb,var(--c) 40%,var(--surface))}
+.mlist{list-style:none;margin:8px 0 0;padding:0;display:flex;flex-direction:column;gap:4px}
+.mlist button{width:100%;text-align:left;border:0;border-left:3px solid var(--c);background:color-mix(in srgb,var(--c) 12%,var(--surface));color:var(--ink);font:inherit;font-size:13px;line-height:1.3;padding:4px 6px;border-radius:4px;cursor:pointer}
+.mlist .dt{font-weight:700;font-variant-numeric:tabular-nums;margin-right:4px}
+.mnone{font-size:13px;color:var(--muted);margin-top:6px}
+.agenda{display:flex;flex-direction:column;gap:16px}
+.agenda h3{font-family:var(--font-display);font-size:18px;margin:0 0 6px;border-bottom:1px solid var(--line);padding-bottom:4px}
+.emptyp{color:var(--muted);font-size:15px;padding:12px 0;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.emptyp[hidden],.minis[hidden],.agenda[hidden]{display:none}
+.emptyp button{border:1px solid var(--accent);background:transparent;color:var(--accent);border-radius:8px;padding:5px 10px;font:inherit;font-size:14px;cursor:pointer}
+.scope{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.sbtn{border:2px solid var(--accent);background:var(--surface);color:var(--accent);border-radius:999px;padding:7px 16px;font:inherit;font-size:15px;font-weight:600;cursor:pointer}
+.sbtn[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
+.clubpick{display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:600}
+.clubpick select{font:inherit;font-size:15px;padding:6px 10px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink)}
+.sbtn:disabled{opacity:.45;cursor:not-allowed}
+.scopehint{font-size:14px;color:var(--muted)}
+.notice[hidden]{display:none}
+.dd[hidden]{display:none}
+.cal-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+.cal-head h2{font-size:22px}
+.navbtn{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:8px;width:38px;height:38px;font-size:18px;cursor:pointer}
+.navbtn:hover{border-color:var(--accent)}
+.grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));border-top:1px solid var(--line);border-left:1px solid var(--line)}
+.dow{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);padding:6px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);text-align:center}
+.cell{min-height:96px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:4px;display:flex;flex-direction:column;gap:3px}
+.cell.out{background:color-mix(in srgb,var(--bg) 60%,transparent)}
+.cell.out .num{opacity:.45}
+.cell.today{background:var(--today)}
+.num{font-size:13px;font-weight:600;color:var(--muted);font-variant-numeric:tabular-nums}
+.cell.today .num{color:var(--accent)}
+.ev{border:0;text-align:left;font:inherit;font-size:12.5px;line-height:1.25;padding:3px 5px;border-radius:4px;cursor:pointer;color:var(--ink);background:color-mix(in srgb,var(--c) 18%,var(--surface));border-left:3px solid var(--c);overflow-wrap:anywhere}
+.ev:hover{background:color-mix(in srgb,var(--c) 30%,var(--surface))}
+@media (max-width:560px){.cell{min-height:64px}.ev{font-size:0;padding:0;height:8px;border-left-width:0;background:var(--c)}}
+.upcoming{display:flex;flex-direction:column;gap:10px;margin:12px 0 0;padding:0;list-style:none}
+.up{display:grid;grid-template-columns:52px 1fr;gap:12px;align-items:start;width:100%;text-align:left;font:inherit;color:inherit;background:transparent;border:1px solid var(--line);border-radius:10px;padding:10px;cursor:pointer}
+.up:hover{border-color:var(--accent)}
+.datebox{border-radius:8px;text-align:center;padding:4px 0;background:color-mix(in srgb,var(--c) 18%,var(--surface));border-top:4px solid var(--c)}
+.datebox .m{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.datebox .d{font-family:var(--font-display);font-size:22px;line-height:1;font-variant-numeric:tabular-nums}
+.up .t{font-weight:700;line-height:1.3}
+.up .s{font-size:14px;color:var(--muted)}
+.pill{display:inline-block;font-size:12px;font-weight:700;border-radius:999px;padding:1px 8px;margin-top:4px}
+.pill.unconfirmed{background:var(--warn-bg);color:var(--warn-ink)}
+.pill.confirmed{background:var(--ok-bg);color:var(--ok-ink)}
+.pill.fund{background:color-mix(in srgb,var(--gold) 22%,var(--surface));color:var(--ink);border:1px solid color-mix(in srgb,var(--gold) 60%,transparent)}
+.pill.ours{background:var(--accent);color:var(--accent-ink)}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;margin-top:14px}
+.card{display:flex;flex-direction:column;gap:6px;text-align:left;font:inherit;color:inherit;background:var(--surface);border:1px solid var(--line);border-top:4px solid var(--c);border-radius:10px;padding:14px;cursor:pointer}
+.card:hover{border-color:var(--accent);border-top-color:var(--c)}
+.card .t{font-weight:700;line-height:1.3}
+.card .s{font-size:14px;color:var(--muted)}
+.empty{color:var(--muted);font-size:15px;padding:8px 0}
+dialog{border:1px solid var(--line);border-radius:14px;padding:0;max-width:560px;width:calc(100% - 32px);background:var(--surface);color:var(--ink)}
+dialog::backdrop{background:rgba(10,15,25,.45)}
+.dlg{padding:22px;display:flex;flex-direction:column;gap:12px}
+.dlg h3{font-family:var(--font-display);font-size:22px;margin:0;line-height:1.2;text-wrap:balance}
+.dlg dl{display:grid;grid-template-columns:110px 1fr;gap:6px 12px;margin:0;font-size:15px}
+.dlg dt{color:var(--muted);font-weight:600}
+.dlg dd{margin:0;overflow-wrap:anywhere}
+.dlg a{color:var(--accent)}
+.dlg .close{align-self:flex-end;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:8px;padding:6px 14px;font:inherit;cursor:pointer}
+.host{display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:600}
+footer{font-size:14px;color:var(--muted);border-top:1px solid var(--line);padding-top:14px}
+@media (prefers-reduced-motion:no-preference){.ev,.up,.card,.chip{transition:background .15s,border-color .15s}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow" id="eyebrow">Rotary District 5500 · Tucson area</div>
+    <h1 id="pageTitle">Tucson-Area Rotary Service Activities</h1>
+    <p class="lede" id="ledeText"></p>
+    <div class="scope" role="group" aria-label="Which projects to show">
+      <label class="clubpick" for="myClub">Your club <select id="myClub"></select></label>
+      <button class="sbtn" data-scope="mine" aria-pressed="true" id="sbMine">Your club</button>
+      <button class="sbtn" data-scope="all" aria-pressed="false" id="sbAll">Your club + partner clubs</button>
+      <span class="scopehint" id="scopeHint"></span>
+    </div>
+    <div class="notice" role="note" id="partnerNotice" hidden><span aria-hidden="true">⚠</span><span>Projects marked <strong>Your club</strong> are your own club's. Projects marked <strong>Check with host club</strong> come from the clubs' public websites and newsletters and haven't been confirmed yet. Contact the host club before you go.</span></div>
+    <div class="meta" id="updated"></div>
+  </header>
+
+  <div class="toolbar" role="toolbar" aria-label="Filters">
+    <span class="tlabel">Filter:</span>
+    <div class="dd"><button class="ddbtn" type="button" data-dd="pClub" aria-expanded="false" aria-controls="pClub"><span id="lblClub">Clubs</span> <span aria-hidden="true">▾</span></button>
+      <div class="pop" id="pClub" hidden><div class="filters" id="filters" aria-label="Filter by host club"></div></div></div>
+    <div class="dd"><button class="ddbtn" type="button" data-dd="pType" aria-expanded="false" aria-controls="pType"><span id="lblType">Type of service</span> <span aria-hidden="true">▾</span></button>
+      <div class="pop" id="pType" hidden><div class="filters" id="typeFilters" aria-label="Filter by type of service"></div></div></div>
+    <div class="dd"><button class="ddbtn" type="button" data-dd="pFocus" aria-expanded="false" aria-controls="pFocus"><span id="lblFocus">Rotary focus</span> <span aria-hidden="true">▾</span></button>
+      <div class="pop" id="pFocus" hidden><div class="filters" id="focusFilters" aria-label="Filter by Rotary area of focus"></div></div></div>
+    <div class="dd"><button class="ddbtn" type="button" data-dd="pDist" aria-expanded="false" aria-controls="pDist"><span id="lblDist">Drive time</span> <span aria-hidden="true">▾</span></button>
+      <div class="pop distpop" id="pDist" hidden>
+        <label for="zip">Your ZIP code <input id="zip" inputmode="numeric" pattern="[0-9]{5}" maxlength="5" placeholder="e.g. 85743" class="zipin"></label>
+        <button class="chip bulk" id="zipGo" type="button">Use ZIP</button>
+        <span id="zipMsg" role="status" class="zipmsg"></span>
+        <label for="maxMin">Drive time up to <select id="maxMin"><option value="0">any drive time</option><option value="15">15 min</option><option value="30">30 min</option><option value="45">45 min</option><option value="60">60 min</option></select></label>
+        <label for="incUnknown"><input type="checkbox" id="incUnknown" checked> Include projects without a fixed location</label>
+        <span class="hint">Enter your ZIP code to see drive times, measured from a central point in that ZIP. They are estimates (straight-line distance with an allowance for roads and typical speeds), so check a map app before you go. Clear the box to turn them off.</span>
+      </div></div>
+    <div class="dd"><button class="ddbtn" type="button" data-dd="pLen" aria-expanded="false" aria-controls="pLen"><span id="lblLen">Length</span> <span aria-hidden="true">▾</span></button>
+      <div class="pop distpop" id="pLen" hidden>
+        <label for="maxHrs">Length <select id="maxHrs"><option value="0">any length</option><option value="1">up to 1 hour</option><option value="2">up to 2 hours</option><option value="3">up to 3 hours</option><option value="4">up to 4 hours</option><option value="-4">more than 4 hours</option></select></label>
+        <label for="incNoLen"><input type="checkbox" id="incNoLen" checked> Include events whose length isn't known</label>
+      </div></div>
+    <button class="clearall" type="button" id="clearAll" hidden>Clear filters</button>
+    <span class="countmsg" id="countMsg" aria-live="polite"></span>
+  </div>
+
+  <div class="main">
+    <section class="panel" aria-labelledby="monthTitle">
+      <div class="viewbar" role="group" aria-label="Calendar view">
+        <button class="vbtn" data-mode="month" aria-pressed="true">Month</button>
+        <button class="vbtn" data-mode="quarter" aria-pressed="false">Quarter</button>
+        <button class="vbtn" data-mode="year" aria-pressed="false">Year</button>
+        <button class="vbtn" data-mode="list" aria-pressed="false">List</button>
+        <button class="vbtn today-btn" id="toToday" type="button">Today</button>
+      </div>
+      <div class="cal-head">
+        <button class="navbtn" id="prev" aria-label="Previous">‹</button>
+        <h2 id="monthTitle" aria-live="polite"></h2>
+        <button class="navbtn" id="next" aria-label="Next">›</button>
+      </div>
+      <div class="grid" id="grid"></div>
+      <div class="minis" id="minis" hidden></div>
+      <div class="agenda" id="agenda" hidden></div>
+      <div class="emptyp" id="emptyp" hidden></div>
+    </section>
+    <section class="panel" aria-labelledby="upTitle">
+      <h2 id="upTitle">Coming up</h2>
+      <ul class="upcoming" id="upcoming"></ul>
+    </section>
+  </div>
+
+  <section aria-labelledby="regTitle">
+    <h2 id="regTitle">Regular and yearly projects</h2>
+    <p class="lede" style="margin-top:6px">These run on a repeating schedule or happen once a year. Exact dates go on the calendar once the host club announces them.</p>
+    <div class="cards" id="cards"></div>
+  </section>
+
+  <footer>This calendar is maintained by the Rotary Club of Marana and reviewed weekly. To suggest a project or report a change, contact the Rotary Club of Marana. Clubs can link straight to their own view by adding their club's code to the address, for example #marana or #oro.</footer>
+</div>
+
+<dialog id="dlg" aria-labelledby="dlgTitle">
+  <div class="dlg">
+    <div class="host" id="dlgHost"></div>
+    <h3 id="dlgTitle"></h3>
+    <span id="dlgStatus"></span>
+    <dl id="dlgList"></dl>
+    <button class="close" id="dlgClose">Close</button>
+  </div>
+</dialog>
+
+<script>
+/* ===== DATA: edit this block to update the calendar ===== */
+const LAST_UPDATED = "2026-11-13";
+const CLUBS = {
+  "marana":      {name:"Rotary Club of Marana",         full:"Rotary Club of Marana",        match:"Marana",                 color:"#c98a12"},
+  "multi":       {name:"Multi-club",                    color:"#8a7a5c"},
+  "dove":        {name:"Dove Mountain",                 full:"Dove Mountain Rotary",         match:"Dove Mountain",          color:"#2f7d5b"},
+  "oro":         {name:"Oro Valley",                    full:"Oro Valley Rotary",            match:"Oro Valley",             color:"#b4472f"},
+  "tucson":      {name:"Rotary Club of Tucson",         full:"Rotary Club of Tucson",        match:"Rotary Club of Tucson",  color:"#1f4e8c"},
+  "saddle":      {name:"SaddleBrooke / SB Sunrise",     full:"SaddleBrooke Rotary clubs",    match:"SaddleBrooke",           color:"#7a4fa3"},
+  "catalina":    {name:"Catalina (Tucson)",             full:"Catalina Rotary",              match:"Catalina",               color:"#0f8a8a"},
+  "casas":       {name:"Casas Adobes",                  full:"Casas Adobes Rotary",          match:"Casas Adobes",           color:"#8a6d1f"},
+  "rincon":      {name:"Rincon (Tucson)",               full:"Rincon Rotary",                match:"Rincon",                 color:"#5b6f8a"},
+  "presidio":    {name:"Tucson Presidio",               full:"Tucson Presidio Rotary",       match:"Presidio",               color:"#8a5b3c"},
+  "sunrise":     {name:"Tucson Sunrise",                full:"Tucson Sunrise Rotary",        match:"Tucson Sunrise",         color:"#d0612a"},
+  "sunset":      {name:"Tucson Sunset",                 full:"Tucson Sunset Rotary",         match:"Tucson Sunset",          color:"#9c2f6b"},
+  "kino":        {name:"Tucson Kino",                   full:"Tucson Kino Rotary",           match:"Kino",                   color:"#4a6b2a"},
+  "verde":       {name:"Tucson Verde",                  full:"Tucson Verde Rotary",          match:"Verde",                  color:"#3f9a3a"},
+  "rainbow":     {name:"Tucson Rainbow",                full:"Tucson Rainbow Rotary",        match:"Rainbow",                color:"#c2417e"},
+  "rotaract":    {name:"UA Rotaract (students)",        full:"UA Rotaract",                  match:"Rotaract",               color:"#3b6fb6"},
+  "district":    {name:"District 5500",                 color:"#6b7280"}
+};
+// Kinds of service, for the "Type" filter. Items list one or more with types:["key", ...].
+const TYPES = {
+  food:{name:"Food & hunger"}, youth:{name:"Kids & education"}, environment:{name:"Cleanups & environment"},
+  veterans:{name:"Veterans"}, needs:{name:"Shelter & basic needs"}, health:{name:"Health"},
+  drive:{name:"Collection drives"}, fundraiser:{name:"Fundraiser volunteering"}, community:{name:"Community events"}
+};
+// Rotary's seven official areas of focus, for the "Rotary focus" filter. Items list them with focus:["key", ...]; "none" = not tied to one.
+const FOCUS = {
+  peace:{name:"Peacebuilding & conflict prevention"}, disease:{name:"Disease prevention & treatment"},
+  water:{name:"Water, sanitation & hygiene"}, mch:{name:"Maternal & child health"},
+  education:{name:"Basic education & literacy"}, economic:{name:"Community economic development"},
+  environment:{name:"Supporting the environment"}, none:{name:"Not tied to an area of focus"}
+};
+// Places with map coordinates [lat, lng]. Items point to one with venue:"key".
+const VENUES = {
+  vista:[32.35777,-111.11512], ovtown:[32.40777,-110.99422], dovemtn:[32.45923,-111.07216], saddle:[32.53770,-110.89724],
+  foothills:[32.29785,-110.91870], downtown:[32.22187,-110.97127], cemetery:[32.49602,-111.26820], tcc:[32.21781,-110.97403],
+  childclinic:[32.25456,-110.88122], silverbell7548:[32.34696,-111.09372], mvhs:[32.38026,-111.04810], maranafb:[32.45362,-111.21580],
+  mtab:[32.27301,-110.96168], impact:[32.48938,-110.91705], yoto:[32.25288,-110.92724], pinz:[32.29667,-110.98000],
+  cfb:[32.18874,-110.92509], triy:[32.56182,-110.71889], oraclecc:[32.60941,-110.76745], tricomfb:[32.73469,-110.64939],
+  trak:[32.27301,-110.92281], ovnazarene:[32.37448,-110.97786], rodeo:[32.16432,-110.96783], brandifenton:[32.27200,-110.91778],
+  roadrunner:[32.41423,-111.32350], missiongarden:[32.21351,-110.98705], uamlb:[32.23292,-110.95022], rcotoffice:[32.21546,-110.90676],
+  bgcmorton:[32.25090,-110.92460], bgctuttle:[32.19300,-110.93334]
+};
+// Starting points visitors can choose from.
+const ORIGINS = [
+  {key:"vista", name:"Vista Academy (Marana Rotary meetings)"},
+  {key:"dovemtn", name:"Dove Mountain"},
+  {key:"ovtown", name:"Oro Valley (Town Hall)"},
+  {key:"saddle", name:"SaddleBrooke"},
+  {key:"foothills", name:"Catalina Foothills"},
+  {key:"downtown", name:"Downtown Tucson"}
+];
+// Tucson-area ZIP codes with a central point [lat, lng], for the "Your ZIP code" box. Leave as is.
+const ZIPS = {
+  "85701":[32.21479,-110.97153],"85704":[32.33950,-110.98643],"85705":[32.27452,-110.98643],"85706":[32.14857,-110.96259],
+  "85708":[32.18024,-110.87317],"85710":[32.21657,-110.81953],"85711":[32.21073,-110.88509],"85712":[32.25409,-110.88509],
+  "85713":[32.19194,-110.96259],"85714":[32.16572,-110.94172],"85715":[32.25145,-110.83741],"85716":[32.23709,-110.92086],
+  "85718":[32.30856,-110.91490],"85719":[32.24381,-110.94470],"85721":[32.23190,-110.95354],"85724":[32.24030,-110.94545],
+  "85730":[32.18948,-110.72417],"85735":[32.05655,-111.42759],"85736":[31.79626,-111.42759],"85737":[32.39519,-110.91490],
+  "85739":[32.48938,-110.91705],"85741":[32.33560,-111.04008],"85742":[32.39201,-111.05796],"85743":[32.35777,-111.11512],
+  "85745":[32.27087,-111.06989],"85746":[32.05407,-111.06989],"85747":[32.05985,-110.78377],"85748":[32.22474,-110.77185],
+  "85749":[32.29322,-110.68841],"85750":[32.31210,-110.83145],"85755":[32.46060,-110.97451],"85756":[32.08697,-110.87913],
+  "85757":[32.12378,-111.10565],"85658":[32.45923,-111.07216],"85653":[32.44876,-111.20885],"85629":[31.95757,-110.98064],
+  "85614":[31.83685,-111.06989],"85622":[31.80598,-111.02816],"85641":[32.00053,-110.70092],"85623":[32.61923,-110.79321]
+};
+// Dated events. date: YYYY-MM-DD. status: "ours" (project of the Rotary Club of Marana, which maintains this page), "unconfirmed" or "confirmed".
+const EVENTS = [
+  {date:"2026-11-14", time:"8:15–10:00 am", hours:1.75, types:["health","community"], focus:["disease"], title:"ALS Walk", club:"catalina", hosts:"Catalina Rotary", where:"Tucson Auto Museum (confirm location)", contact:"catalinarotary.org/contact", partner:"ALS Association", notes:"", link:"https://catalinarotary.org/", status:"unconfirmed"},
+  {date:"2026-11-16", time:"5:00–6:30 pm", venue:"bgcmorton", hours:1.5, types:["youth","food"], focus:["economic"], title:"Thanksgiving dinner at Frank Morton Boys & Girls Club", club:"catalina", hosts:"Catalina Rotary", where:"Frank Morton Club, Tucson", contact:"catalinarotary.org/contact", partner:"Boys & Girls Clubs of Tucson", notes:"Help serve Thanksgiving dinner to club kids and families.", link:"https://catalinarotary.org/", status:"unconfirmed"},
+  {date:"2026-11-17", time:"4:30–6:00 pm", venue:"bgctuttle", hours:1.5, types:["youth","food"], focus:["economic"], title:"Thanksgiving dinner at Tuttle Boys & Girls Club", club:"catalina", hosts:"Catalina Rotary", where:"Tuttle Club, Tucson", contact:"catalinarotary.org/contact", partner:"Boys & Girls Clubs of Tucson", notes:"Help serve Thanksgiving dinner to club kids and families.", link:"https://catalinarotary.org/", status:"unconfirmed"},
+  {date:"2026-11-21", time:"Rides start 7:00 am", venue:"tcc", types:["health","fundraiser"], focus:["disease"], title:"El Tour de Tucson: Ride to End Polio", club:"tucson", hosts:"Rotary Club of Tucson, Dove Mountain and others", where:"Tucson Convention Center, 260 S Church Ave", contact:"Rotary Club of Tucson office, 520-623-2281", partner:"Rotary PolioPlus", notes:"Ride with the Rotary team to raise money for polio eradication, or volunteer on ride day.", link:"https://eltourdetucson.org/", status:"unconfirmed"},
+  {date:"2026-11-21", time:"Time not listed", types:["health"], focus:["disease"], title:"Aid station at El Tour de Tucson", club:"sunrise", hosts:"Tucson Sunrise Rotary", where:"On the El Tour route (location not listed)", contact:"Anne Harman, Community Service Chair (via the club website's contact form)", partner:"El Tour de Tucson; Rotary PolioPlus", notes:"Staff a rider aid station during the Ride to End Polio.", link:"https://tucsonsunriserotaryclub.org/", status:"unconfirmed"},
+  {date:"2026-12-04", time:"Time not listed (2025 ran 10 am–5 pm)", venue:"childclinic", types:["youth","health"], focus:["mch"], title:"Children's Clinics Holiday Toy Market", club:"sunrise", hosts:"Tucson Sunrise Rotary", where:"Children's Clinics, 2600 N Wyatt Dr, Tucson", contact:"Anne Harman, Community Service Chair (via the club website's contact form)", partner:"Children's Clinics", notes:"Help with the clinic's holiday toy market for the children and families it serves.", link:"https://tucsonsunriserotaryclub.org/", status:"unconfirmed"},
+  {date:"2026-12-19", time:"Ceremony 10:00 am", venue:"cemetery", types:["veterans"], focus:["none"], title:"Wreaths Across America", club:"multi", hosts:"Marana, Dove Mountain, SaddleBrooke, Oro Valley, Catalina", where:"Arizona Veterans Memorial Cemetery at Marana, 15950 N Luckett Rd", contact:"Rotary Club of Marana", partner:"Wreaths Across America", notes:"Wreath placement follows the ceremony. Register as a volunteer on the Wreaths Across America site. One sponsor page lists noon, so confirm the time.", link:"https://www.wreathsacrossamerica.org/az0011p", status:"unconfirmed"},
+  {date:"2027-02-06", time:"Time not listed", types:["food"], focus:["economic"], title:"Sandwich making", club:"casas", hosts:"Casas Adobes Rotary", where:"Location not listed", contact:"casasadobesrotary@gmail.com", partner:"", notes:"", link:"https://casasadobesrotary.org/", status:"unconfirmed"},
+  {date:"2027-03-06", time:"8:00 am–noon", venue:"silverbell7548", hours:4, types:["fundraiser"], focus:["none"], title:"Tour de Cookie", club:"marana", hosts:"Rotary Club of Marana", where:"7548 N Silverbell Rd, Tucson", contact:"Gregg Hansen (event lead and registration)", partner:"", notes:"Marana's signature fundraiser. Members volunteer on committees: route and permitting, sponsors, and cookie booths (homemade or gourmet cookies only).", link:"https://www.zeffy.com/organizations/rotary-club-of-marana", status:"ours"},
+  {date:"2027-03-20", time:"Check-in 8:30 am, packing 9:00 am–noon", venue:"mvhs", hours:3.5, types:["food"], focus:["economic"], title:"Meals of Hope: pack 30,000 meals", club:"marana", hosts:"Rotary Club of Marana with Dove Mountain, Oro Valley, SaddleBrooke, SaddleBrooke Sunrise, Tucson Verde, Tucson Rainbow", where:"To be announced (Mountain View High School suggested)", contact:"Cindy Dooling, Marana (logistics); Scott Parfrey, Dove Mountain", partner:"Meals of Hope", notes:"Seven-club project to pack about 30,000 meals for families across Southern Arizona. All hands on deck.", link:"https://www.dacdb.com/rotary/accounts/5500/Bulletins/72360/09-03-2026%20Bulletin.pdf", status:"unconfirmed"}
+];
+// Regular / yearly projects without a set date yet.
+const REGULAR = [
+  {types:["community"], focus:["none"], title:"Fifth Tuesday service project", club:"marana", hosts:"Rotary Club of Marana", when:"Months with a fifth Tuesday (next: Dec 29, 2026; Mar 30, 2027)", where:"Varies", contact:"Rotary Club of Marana", partner:"", notes:"On each fifth Tuesday the club holds a community service project or a social instead of a regular meeting. Check which it is.", link:"https://www.maranarotary.org/helps/", status:"ours"},
+  {venue:"roadrunner", types:["youth"], focus:["education"], title:"Roadrunner Elementary book project", club:"marana", hosts:"Rotary Club of Marana", when:"Book presentations being scheduled", where:"Roadrunner Elementary, Marana", contact:"Josh Bayne (book stickers); Principal Kristina Brewer (student presentations)", partner:"Roadrunner Elementary", notes:"Over 300 books purchased toward a $1,000 goal; members help label books and present them to students.", link:"https://www.maranarotary.org/helps/", status:"ours"},
+  {venue:"maranafb", hours:3, types:["food"], focus:["economic"], title:"Food box packing at Marana Community Food Bank", club:"dove", hosts:"Dove Mountain Rotary", when:"Several times a year, weekday mornings (e.g. Thu 10 am–1 pm)", where:"Marana Community Food Bank, Marana", contact:"Scott Parfrey, Dove Mountain Service Projects Chair", partner:"Marana Community Food Bank", notes:"The closest project to Marana. Marana members already join.", link:"https://www.dacdb.com/rotary/accounts/5500/Bulletins/72360/09-03-2026%20Bulletin.pdf", status:"unconfirmed"},
+  {venue:"mtab", hours:2, types:["youth","needs"], focus:["economic"], title:"More Than a Bed volunteer shifts", club:"dove", hosts:"Dove Mountain + SaddleBrooke", when:"Periodic shifts, up to 10 volunteers", where:"Not stated", contact:"Scott Parfrey, Dove Mountain", partner:"More Than a Bed", notes:"Multi-club project.", link:"https://www.dacdb.com/rotary/accounts/5500/Bulletins/72360/Bulletin%20(128201)%2002-02-2026.pdf", status:"unconfirmed"},
+  {types:["food"], focus:["economic","mch"], title:"Feed My Starving Children meal packing", club:"dove", hosts:"Dove Mountain Rotary", when:"Occasional", where:"Not stated", contact:"Scott Parfrey, Dove Mountain", partner:"Feed My Starving Children", notes:"Interact students have joined.", link:"https://www.dacdb.com/rotary/accounts/5500/Bulletins/72360/Bulletin%20(128201)%2002-02-2026.pdf", status:"unconfirmed"},
+  {types:["veterans","food"], focus:["economic"], title:"Dinners for homeless veterans", club:"dove", hosts:"Dove Mountain Rotary", when:"Schedule not published", where:"Not stated", contact:"Scott Parfrey, Dove Mountain", partner:"Tucson Veterans Serving Veterans", notes:"", link:"https://www.dacdb.com/rotary/accounts/5500/Bulletins/72360/Living%20Brochure%2006-18-2025.pdf", status:"unconfirmed"},
+  {venue:"impact", types:["food"], focus:["economic"], title:"Weekly Trader Joe's food pickup for IMPACT", club:"oro", hosts:"Oro Valley Rotary", when:"Every Saturday (as of 2025)", where:"Trader Joe's to IMPACT of Southern Arizona", contact:"Jane Shurtleff, janeshurtleff@gmail.com", partner:"IMPACT of Southern Arizona", notes:"A steady weekly option.", link:"https://www.dacdb.com/rotary/accounts/5500/Bulletins/28926/RCOV%20Bulletin%2005-04-2025.pdf", status:"unconfirmed"},
+  {types:["drive"], focus:["none"], title:"Holiday gift collection", club:"oro", hosts:"Oro Valley Rotary", when:"Yearly, December", where:"Not stated", contact:"Jane Shurtleff, janeshurtleff@gmail.com", partner:"", notes:"", link:"https://www.dacdb.com/Rotary/Accounts/5500/Downloads/28926/Board%20Reports/Community%20Service%20December%202024%20Update.pdf", status:"unconfirmed"},
+  {venue:"yoto", types:["youth","drive"], focus:["education"], title:"YOTO mini-mall collection and stocking", club:"oro", hosts:"Oro Valley Rotary", when:"Occasional (last seen May 2025)", where:"YOTO, 2525 N Country Club Rd, Tucson", contact:"Jane Shurtleff, janeshurtleff@gmail.com", partner:"Youth On Their Own", notes:"", link:"https://www.dacdb.com/rotary/accounts/5500/Bulletins/28926/RCOV%20Bulletin%2005-04-2025.pdf", status:"unconfirmed"},
+  {venue:"trak", hours:2, types:["youth"], focus:["none"], title:"TRAK ranch work mornings", club:"tucson", hosts:"Rotary Club of Tucson", when:"Saturdays about monthly, 8–10 am", where:"TRAK (Therapeutic Ranch for Animals and Kids), Tucson", contact:"Nancy Gutt, 520-730-4592", partner:"TRAK", notes:"Hands-on ranch chores in small groups.", link:"https://tucsonrotary.org/bulletin/View/88ac3e14-b7d9-420d-a6cf-0448f7aa7d24", status:"unconfirmed"},
+  {venue:"pinz", hours:3, types:["environment"], focus:["environment"], title:"Adopt-A-Road cleanup, Oracle Rd (River to Wetmore)", club:"tucson", hosts:"Rotary Club of Tucson", when:"Saturdays every 4–7 weeks, 8–11 am; pauses in summer", where:"Meet at Pinz Bowling, 501 W River Rd", contact:"RCOT office 520-623-2281", partner:"Tucson Clean & Beautiful", notes:"Supplies provided; bring water. The longtime project lead retired in May 2026, so check that it is continuing.", link:"https://tucsonrotary.org/Stories/clean-beautiful-service-project-recap", status:"unconfirmed"},
+  {venue:"cfb", types:["food"], focus:["economic"], title:"Food packing at Community Food Bank of Southern Arizona", club:"tucson", hosts:"Rotary Club of Tucson", when:"Occasional Saturday mornings", where:"Community Food Bank, Tucson", contact:"Bobby Larson, Rotary Club of Tucson", partner:"Community Food Bank of Southern Arizona", notes:"35 Rotarians plus guests last time.", link:"https://tucsonrotary.org/Stories/rotarians-pack-generosity-at-the-community-food-bank", status:"unconfirmed"},
+  {types:["fundraiser"], focus:["none"], title:"Salvation Army bell ringing", club:"tucson", hosts:"Rotary Club of Tucson", when:"Yearly, holiday season", where:"Tucson", contact:"RCOT office 520-623-2281", partner:"Salvation Army", notes:"", link:"https://www.tucsonrotary.org/sitepage/about-our-club", status:"unconfirmed"},
+  {venue:"triy", types:["youth"], focus:["none"], title:"Triangle Y Ranch Camp work day", club:"multi", hosts:"Rotary Club of Tucson lead; clubs across greater Tucson", when:"Yearly, spring (2026: Apr 4, 8:30 am)", where:"Triangle Y Ranch Camp", contact:"Kurtis Dawson, kurtistucsonrotary@gmail.com", partner:"YMCA Triangle Y", notes:"25–50 Rotarians needed. Clubs from across greater Tucson help get the camp ready for summer.", link:"https://www.tucsonrotary.org/events", status:"unconfirmed"},
+  {venue:"oraclecc", types:["food"], focus:["economic"], title:"Monthly lunch for people in need", club:"saddle", hosts:"SaddleBrooke Rotary", when:"Monthly", where:"Oracle Community Center", contact:"Diane Demeroutis, rotarysbaz@gmail.com", partner:"Oracle Community Center", notes:"", link:"https://saddlebrookeprogress.com/?p=44180", status:"unconfirmed"},
+  {venue:"tricomfb", types:["food"], focus:["economic"], title:"Food bank sorting", club:"saddle", hosts:"SaddleBrooke and SaddleBrooke Sunrise", when:"Ongoing", where:"Tri-Community Food Bank, 108 Redwood St, Mammoth", contact:"Diane Demeroutis, rotarysbaz@gmail.com", partner:"Tri-Community Food Bank", notes:"", link:"https://saddlebrookeprogress.com/?p=40476", status:"unconfirmed"},
+  {types:["food"], focus:["economic"], title:"IMPACT food bags and senior boxes", club:"saddle", hosts:"SaddleBrooke Rotary", when:"Regular", where:"Not stated", contact:"Diane Demeroutis, rotarysbaz@gmail.com", partner:"IMPACT of Southern Arizona", notes:"", link:"https://saddlebrookeprogress.com/?p=40476", status:"unconfirmed"},
+  {venue:"oraclecc", types:["environment"], focus:["environment"], title:"Road cleanup", club:"saddle", hosts:"SaddleBrooke Rotary", when:"Regular", where:"American Ave (Oracle) and Golden Ranch (Catalina)", contact:"Diane Demeroutis, rotarysbaz@gmail.com", partner:"", notes:"", link:"https://saddlebrookeprogress.com/?p=44180", status:"unconfirmed"},
+  {types:["food"], focus:["economic"], title:"Thanksgiving turkey kit delivery", club:"saddle", hosts:"SaddleBrooke Rotary", when:"Yearly, November", where:"Catalina, Oracle, Copper Corridor", contact:"Diane Demeroutis, rotarysbaz@gmail.com", partner:"IMPACT of Southern Arizona; Elks", notes:"", link:"https://saddlebrookeprogress.com/?p=44180", status:"unconfirmed"},
+  {hours:24, types:["needs"], focus:["economic"], title:"Build a House in a Day", club:"saddle", hosts:"SaddleBrooke lead; Dove Mountain, Marana, Tucson joined", when:"Occasional trip (last December 2024)", where:"Mexico, by bus from Chula Vista", contact:"Dan Watson, SaddleBrooke Rotary", partner:"Corazon, Inc.", notes:"Overnight travel. No construction skills needed.", link:"https://saddlebrookeprogress.com/?p=42834", status:"unconfirmed"},
+  {venue:"rodeo", types:["fundraiser"], focus:["none"], title:"Tucson Rodeo volunteer beer sales", club:"catalina", hosts:"Catalina Rotary", when:"Yearly, February", where:"Tucson Rodeo Grounds", contact:"catalinarotary.org/contact", partner:"La Fiesta de los Vaqueros", notes:"Fundraiser volunteering the club has done for 25+ years.", link:"https://catalinarotary.org/?p=7358", status:"unconfirmed"},
+  {venue:"ovnazarene", hours:4.5, types:["food"], focus:["economic","mch"], title:"Feed My Starving Children meal packing (multi-club)", club:"sunset", hosts:"Tucson Sunset Rotary (organizer)", when:"Yearly, about February (2025: Thu Feb 6, 5:30–10 pm)", where:"Church of the Nazarene, Oro Valley (2025)", contact:"PDG Joe Hentges, jthentges41@gmail.com, 520-449-1298", partner:"Feed My Starving Children", notes:"Held in Oro Valley, close to Marana. Ask about the 2027 date.", link:"https://dacdb.com//accounts/5500/Newsletter/0/IMPACT!%20for%20January%2014%202025.pdf", status:"unconfirmed"},
+  {types:["drive","needs"], focus:["mch"], title:"Diaper and supply drive", club:"kino", hosts:"Tucson Kino + Tucson Sunset", when:"Yearly collection (last seen June 2024)", where:"Tucson", contact:"Not listed", partner:"", notes:"Collected more than 14,900 diapers and supplies for women and children in need.", link:"https://dacdb.com//accounts/5500/Newsletter/0/IMPACT!%20for%20April%208%202025.pdf", status:"unconfirmed"},
+  {hours:5, types:["environment"], focus:["environment"], title:"Docents for the Tour of Tucson Homes & Businesses", club:"verde", hosts:"Tucson Verde Rotary", when:"Yearly, April (2026: Sun Apr 26, 9 am–2 pm)", where:"Homes and businesses around Tucson", contact:"Ellie Patterson, ellie.patterson1@outlook.com", partner:"", notes:"Greet and guide visitors on an environment-focused tour.", link:"https://www.dacdb.com//accounts/5500/Newsletter/0/IMPACT!%20for%20April%2021%202026.pdf", status:"unconfirmed"},
+  {types:["environment"], focus:["environment"], title:"Environmental work days", club:"verde", hosts:"Tucson Verde Rotary", when:"Occasional", where:"e.g. Mission Garden, school gardens", contact:"Ellie Patterson, ellie.patterson1@outlook.com", partner:"", notes:"Projects like buffelgrass removal and garden planting.", link:"https://tucson.com/lifestyles/giving/rotary-club-of-tucson-verde-will-concentrate-on-environmental-issues/article_3d87f4f6-3dc9-11ec-8a78-5fb7e6a8b41c.html", status:"unconfirmed"},
+  {types:["needs"], focus:["peace"], title:"Care packages for Africa Amani Safehouse", club:"rainbow", hosts:"Tucson Rainbow Rotary", when:"Occasional", where:"Not listed", contact:"Chad Denson, charter president", partner:"Africa Amani Safehouse Project", notes:"Packages for LGBTQ refugees in Kenya. Ask about packing days.", link:"https://saddlebrookeprogress.com/?p=45642", status:"unconfirmed"},
+  {venue:"mtab", hours:3, types:["youth","needs"], focus:["economic"], title:"More Than a Bed sorting", club:"rotaract", hosts:"UA Rotaract (student club)", when:"Occasional Saturdays, 9 am–noon", where:"More Than a Bed", contact:"Via Rotary Club of Tucson (Jeanne Zetah)", partner:"More Than a Bed", notes:"Sorting pajamas and clothes for kids alongside university students.", link:"https://dacdb.com//accounts/5500/Newsletter/0/IMPACT!%20for%20January%2014%202025.pdf", status:"unconfirmed"},
+  {venue:"uamlb", types:["youth","health"], focus:["disease","mch"], title:"Dental kit packing and school delivery", club:"rotaract", hosts:"UA Rotaract with Rotary Club of Tucson", when:"Yearly, spring (2024: packed Apr 27, delivered May 2)", where:"UA Modern Languages Building (2024)", contact:"Jeanne Zetah, Rotary Club of Tucson", partner:"", notes:"1,325 kits for three schools in 2024.", link:"https://tucsonrotary.org/bulletin/View/81cce384-f2fb-4f6f-8c1b-b76eee142af5", status:"unconfirmed"},
+  {venue:"rcotoffice", types:["youth","drive"], focus:["none"], title:"Holiday toy drive", club:"rotaract", hosts:"UA Rotaract (Rotary Club of Tucson collects)", when:"Yearly, December", where:"Drop off at RCOT office, 3900 E Timrod St #4, 9 am–4 pm", contact:"RCOT office 520-623-2281", partner:"", notes:"Collection drive.", link:"https://tucsonrotary.org/Stories/rotaract-club-toy-drive", status:"unconfirmed"},
+  {venue:"brandifenton", hours:2, types:["environment"], focus:["environment","water"], title:"Rillito River cleanup (Arizona Rotary Days of Service)", club:"district", hosts:"District 5500, all clubs", when:"Yearly, April (2026: Apr 11, 8–10 am)", where:"Brandi Fenton Memorial Park, Tucson", contact:"District 5500", partner:"Tucson Clean & Beautiful; Pima County", notes:"District-wide. A good first project for new members.", link:"https://www.dacdb.com//accounts/5500/Newsletter/0/IMPACT!%20for%20March%203%202026.pdf", status:"unconfirmed"}
+];
+/* ===== END DATA ===== */
+
+const MONTHS=["January","February","March","April","May","June","July","August","September","October","November","December"];
+const MON3=MONTHS.map(m=>m.slice(0,3));
+const DOW=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+const parse=s=>{const [y,m,d]=s.split("-").map(Number);return new Date(y,m-1,d)};
+const fmtLong=d=>d.toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric",year:"numeric"});
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const today=new Date(); today.setHours(0,0,0,0);
+const active=new Set(Object.keys(CLUBS));
+const activeTypes=new Set(Object.keys(TYPES));
+const activeFocus=new Set(Object.keys(FOCUS));
+let view=new Date(today.getFullYear(),today.getMonth(),1);
+
+document.getElementById("updated").textContent="Last updated "+fmtLong(parse(LAST_UPDATED)).replace(/^\w+, /,"");
+
+function fundBadge(item){return (item.types||[]).includes("fundraiser")?'<span class="pill fund">Fundraiser · volunteers welcome</span> ':'';}
+function statusPill(s,item){if(item&&myClub&&isMine(item))return item.club===myClub?'<span class="pill ours">Your club</span>':'<span class="pill ours">Your club takes part</span>';if(s==="ours"||s==="confirmed")return '<span class="pill confirmed">Confirmed</span>';return '<span class="pill unconfirmed">Check with host club</span>'}
+function color(k){return (CLUBS[k]||CLUBS.multi).color}
+
+function renderFilters(){
+  const used=new Set([...EVENTS,...REGULAR].map(e=>e.club));
+  const f=document.getElementById("filters");
+  f.innerHTML='<span class="lbl">Club:</span>'+
+    '<button class="chip bulk" id="selAll">Select all</button><button class="chip bulk" id="selNone">Deselect all</button>'+
+    Object.entries(CLUBS).filter(([k])=>used.has(k)).map(([k,c])=>
+    `<button class="chip" data-k="${k}" aria-pressed="${active.has(k)}"><span class="dot" style="background:${c.color}"></span>${esc(c.name)}</button>`).join("");
+  f.querySelectorAll(".chip[data-k]").forEach(b=>b.addEventListener("click",()=>{
+    const k=b.dataset.k; active.has(k)?active.delete(k):active.add(k); renderAll();
+  }));
+  document.getElementById("selAll").addEventListener("click",()=>{Object.keys(CLUBS).forEach(k=>active.add(k)); renderAll();});
+  document.getElementById("selNone").addEventListener("click",()=>{active.clear(); renderAll();});
+}
+
+let scope="mine";
+let myClub="";
+const clubKeys=()=>Object.keys(CLUBS).filter(k=>k!=="multi"&&k!=="district");
+const clubFull=k=>(CLUBS[k]&&(CLUBS[k].full||CLUBS[k].name))||"";
+function isMine(item){ if(!myClub) return false; if(item.club===myClub) return true; const m=CLUBS[myClub]&&CLUBS[myClub].match; return !!m && (item.hosts||"").includes(m); }
+function readHash(){ const h=(location.hash||"").replace(/^#/,""); myClub=(CLUBS[h]&&h!=="multi"&&h!=="district")?h:""; }
+readHash();
+function applyScope(){
+  const sel=document.getElementById("myClub");
+  const allItems=[...EVENTS.filter(e=>parse(e.date)>=today),...REGULAR];
+  if(!sel.dataset.filled){
+    sel.innerHTML='<option value="">Choose your club…</option>'+clubKeys().sort((a,b)=>clubFull(a).localeCompare(clubFull(b))).map(k=>`<option value="${k}">${esc(clubFull(k))}</option>`).join("");
+    sel.dataset.filled="1";
+    sel.addEventListener("change",()=>{ const v=sel.value; if(v){ location.hash=v; } else { location.hash=""; myClub=""; renderAll(); } });
+  }
+  sel.value=myClub;
+  if(!myClub) scope="all";
+  const mine=allItems.filter(isMine).length, partnerN=allItems.length-mine;
+  const full=clubFull(myClub);
+  document.getElementById("sbMine").textContent=myClub?full:"Your club";
+  document.getElementById("sbAll").textContent=myClub?full+" + partner clubs":"Your club + partner clubs";
+  document.getElementById("sbMine").disabled=!myClub; document.getElementById("sbAll").disabled=!myClub;
+  document.querySelectorAll(".sbtn").forEach(b=>b.setAttribute("aria-pressed",String(!!myClub && b.dataset.scope===scope)));
+  document.getElementById("pageTitle").textContent=myClub?full+" and Partner Club Service Activities":"Tucson-Area Rotary Service Activities";
+  document.getElementById("eyebrow").textContent=myClub?full:"Rotary District 5500 · Tucson area";
+  document.title=myClub?full+" and Partner Club Service":"Tucson-Area Rotary Service Activities";
+  document.getElementById("partnerNotice").hidden=!(scope==="all");
+  document.querySelector('[data-dd="pClub"]').parentElement.hidden=(myClub&&scope==="mine");
+  document.getElementById("ledeText").textContent= !myClub
+    ? "Hands-on service projects at Rotary clubs across the Tucson area, open to visiting Rotarians. Choose your club to see your own projects first, then add partner clubs for more ways to serve."
+    : scope==="mine"
+      ? `Service projects of ${full}, including multi-club projects it takes part in. Click any event or project for the time, place, and who to contact.`
+      : `${full}'s own service projects, plus hands-on projects at neighboring Rotary clubs that welcome visiting Rotarians. Click any event or project for the time, place, and who to contact.`;
+  const partnerClubs=new Set(allItems.filter(x=>!isMine(x)).map(x=>x.club).filter(k=>k!=="multi"&&k!=="district")).size;
+  document.getElementById("scopeHint").textContent= !myClub ? "" :
+    scope==="mine" ? (mine? `Want more ways to serve? Add ${partnerN} projects from ${partnerClubs} partner clubs.` : `No projects are listed for ${full} yet. Add partner clubs to see ${partnerN} projects.`)
+                   : "Partner club projects are marked with their host club.";
+}
+window.addEventListener("hashchange",()=>{readHash(); scope="mine"; renderAll();});
+let mode="month";
+const isoOf=d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+function matching(){return EVENTS.map((e,idx)=>({e,idx,d:parse(e.date)})).filter(x=>passes(x.e)).sort((a,b)=>a.d-b.d);}
+function periodRange(){
+  const y=view.getFullYear(), m=view.getMonth();
+  if(mode==="month") return [new Date(y,m,1), new Date(y,m+1,1), 1];
+  if(mode==="quarter"){const q=Math.floor(m/3)*3; return [new Date(y,q,1), new Date(y,q+3,1), 3];}
+  if(mode==="year") return [new Date(y,0,1), new Date(y+1,0,1), 12];
+  return [new Date(y,m,1), new Date(y,m+12,1), 12];
+}
+function periodTitle(){
+  const [a,b]=periodRange(); const last=new Date(b); last.setMonth(last.getMonth()-1);
+  if(mode==="month") return MONTHS[a.getMonth()]+" "+a.getFullYear();
+  if(mode==="quarter") return "Q"+(Math.floor(a.getMonth()/3)+1)+" "+a.getFullYear()+" ("+MON3[a.getMonth()]+"–"+MON3[last.getMonth()]+")";
+  if(mode==="year") return String(a.getFullYear());
+  return MON3[a.getMonth()]+" "+a.getFullYear()+" – "+MON3[last.getMonth()]+" "+last.getFullYear();
+}
+function evBtn(x,cls){return `<button class="${cls}" style="--c:${color(x.e.club)}" data-i="${x.idx}">`;}
+function monthGridHTML(){
+  let h=DOW.map(d=>`<div class="dow">${d}</div>`).join("");
+  const start=new Date(view); start.setDate(1-view.getDay());
+  for(let i=0;i<42;i++){
+    const d=new Date(start); d.setDate(start.getDate()+i);
+    if(i===35 && d.getMonth()!==view.getMonth()) break;
+    const iso=isoOf(d);
+    const evs=EVENTS.map((e,idx)=>({e,idx})).filter(x=>x.e.date===iso && passes(x.e));
+    const cls=["cell",d.getMonth()!==view.getMonth()?"out":"",+d===+today?"today":""].join(" ");
+    h+=`<div class="${cls}"><span class="num">${d.getDate()}</span>`+
+      evs.map(x=>`<button class="ev" style="--c:${color(x.e.club)}" data-i="${x.idx}" aria-label="${esc(x.e.title)}, ${esc(fmtLong(d))}">${esc(x.e.title)}</button>`).join("")+`</div>`;
+  }
+  return h;
+}
+function miniHTML(y,m,list){
+  const first=new Date(y,m,1), days=new Date(y,m+1,0).getDate();
+  const inMonth=list.filter(x=>x.d.getFullYear()===y&&x.d.getMonth()===m);
+  let g=DOW.map(d=>`<span class="md">${d[0]}</span>`).join("");
+  for(let i=0;i<first.getDay();i++) g+='<span></span>';
+  for(let day=1;day<=days;day++){
+    const d=new Date(y,m,day); const hits=inMonth.filter(x=>x.d.getDate()===day); const tcls=(+d===+today)?" today":"";
+    g+= hits.length? `<button class="mc has${tcls}" style="--c:${color(hits[0].e.club)}" data-i="${hits[0].idx}" aria-label="${esc(hits.map(x=>x.e.title).join(", "))}, ${esc(fmtLong(d))}">${day}</button>` : `<span class="mc${tcls}">${day}</span>`;
+  }
+  const items=inMonth.length? `<ul class="mlist">`+inMonth.map(x=>`<li>${evBtn(x,"")}<span class="dt">${x.d.getDate()}</span>${esc(x.e.title)}</button></li>`).join("")+`</ul>` : `<div class="mnone">No events</div>`;
+  return `<div class="mini"><h3>${MONTHS[m]} ${y}</h3><div class="mgrid">${g}</div>${items}</div>`;
+}
+function renderGrid(){
+  document.getElementById("monthTitle").textContent=periodTitle();
+  document.querySelectorAll(".vbtn[data-mode]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.mode===mode)));
+  document.querySelector(".main").classList.toggle("wide", mode==="year"||mode==="quarter");
+  const g=document.getElementById("grid"), mi=document.getElementById("minis"), ag=document.getElementById("agenda"), em=document.getElementById("emptyp");
+  g.hidden=mode!=="month"; g.style.display=mode==="month"?"":"none"; mi.hidden=!(mode==="quarter"||mode==="year"); ag.hidden=mode!=="list";
+  const [a,b,n]=periodRange(); const list=matching(); const inP=list.filter(x=>x.d>=a&&x.d<b);
+  if(mode==="month") g.innerHTML=monthGridHTML();
+  if(mode==="quarter"||mode==="year"){ let h=""; for(let k=0;k<n;k++){const d=new Date(a.getFullYear(),a.getMonth()+k,1); h+=miniHTML(d.getFullYear(),d.getMonth(),list);} mi.innerHTML=h; }
+  if(mode==="list"){
+    let h=""; for(let k=0;k<n;k++){const d=new Date(a.getFullYear(),a.getMonth()+k,1); const ms=inP.filter(x=>x.d.getFullYear()===d.getFullYear()&&x.d.getMonth()===d.getMonth()); if(!ms.length) continue;
+      h+=`<section><h3>${MONTHS[d.getMonth()]} ${d.getFullYear()}</h3><ul class="upcoming">`+ms.map(x=>`<li><button class="up" data-i="${x.idx}" style="--c:${color(x.e.club)}">
+        <span class="datebox"><span class="m">${MON3[x.d.getMonth()]}</span><br><span class="d">${x.d.getDate()}</span></span>
+        <span><span class="t">${esc(x.e.title)}</span><br><span class="s">${esc(x.e.time)} · ${esc(x.e.hosts)}</span><br>${(lenText(x.e)||travelText(x.e))?`<span class="trav">${[lenText(x.e),travelText(x.e)].filter(Boolean).join(" · ")}</span><br>`:""}${fundBadge(x.e)}${statusPill(x.e.status,x.e)}</span></button></li>`).join("")+`</ul></section>`;}
+    ag.innerHTML=h;
+  }
+  // empty-period helper
+  if(!inP.length){
+    const nxt=list.find(x=>x.d>=b)||null, prv=[...list].reverse().find(x=>x.d<a)||null;
+    em.innerHTML=`<span>No events to show in this ${mode==="list"?"period":mode}.</span>`+
+      (nxt?`<button type="button" data-jump="${nxt.e.date}">Next: ${esc(nxt.e.title)}, ${MON3[nxt.d.getMonth()]} ${nxt.d.getDate()}, ${nxt.d.getFullYear()}</button>`:"")+
+      (prv&&!nxt?`<button type="button" data-jump="${prv.e.date}">Most recent: ${esc(prv.e.title)}</button>`:"")+
+      (!nxt&&!prv?`<span>Try clearing some filters, or see the regular projects below.</span>`:"");
+    em.hidden=false;
+    em.querySelectorAll("[data-jump]").forEach(btn=>btn.addEventListener("click",()=>{const d=parse(btn.dataset.jump); view=new Date(d.getFullYear(),d.getMonth(),1); renderGrid();}));
+    if(mode!=="month"){ if(mode==="list") ag.innerHTML=""; }
+  } else em.hidden=true;
+  document.querySelectorAll("#grid .ev, #minis button[data-i], #agenda button[data-i]").forEach(btn=>btn.addEventListener("click",()=>openEvent(EVENTS[+btn.dataset.i])));
+}
+document.querySelectorAll(".vbtn[data-mode]").forEach(b=>b.addEventListener("click",()=>{mode=b.dataset.mode; renderGrid();}));
+document.getElementById("toToday").addEventListener("click",()=>{view=new Date(today.getFullYear(),today.getMonth(),1); renderGrid();});
+
+function renderUpcoming(){
+  const ul=document.getElementById("upcoming");
+  const list=EVENTS.map((e,idx)=>({e,idx,d:parse(e.date)})).filter(x=>x.d>=today && passes(x.e)).sort((a,b)=>a.d-b.d);
+  if(!list.length){ul.innerHTML='<li class="empty">No dated events match these filters.</li>';return}
+  ul.innerHTML=list.map(x=>`<li><button class="up" data-i="${x.idx}" style="--c:${color(x.e.club)}">
+    <span class="datebox"><span class="m">${MON3[x.d.getMonth()]}</span><br><span class="d">${x.d.getDate()}</span></span>
+    <span><span class="t">${esc(x.e.title)}</span><br><span class="s">${esc(x.e.time)} · ${esc(x.e.hosts)}</span><br>${(lenText(x.e)||travelText(x.e))?`<span class="trav">${[lenText(x.e),travelText(x.e)].filter(Boolean).join(" · ")}</span><br>`:""}${fundBadge(x.e)}${statusPill(x.e.status,x.e)}</span>
+  </button></li>`).join("");
+  ul.querySelectorAll(".up").forEach(b=>b.addEventListener("click",()=>{
+    const e=EVENTS[+b.dataset.i]; const d=parse(e.date); view=new Date(d.getFullYear(),d.getMonth(),1); renderGrid(); openEvent(e);
+  }));
+}
+
+function renderCards(){
+  const c=document.getElementById("cards");
+  const list=REGULAR.map((r,idx)=>({r,idx})).filter(x=>passes(x.r)).sort((a,b)=>(b.r.club==="marana")-(a.r.club==="marana"));
+  if(!list.length){c.innerHTML='<p class="empty">No projects match these filters.</p>';return}
+  c.innerHTML=list.map(x=>`<button class="card" data-i="${x.idx}" style="--c:${color(x.r.club)}">
+    <span class="host"><span class="dot" style="background:${color(x.r.club)}"></span>${esc(x.r.hosts)}</span>
+    <span class="t">${esc(x.r.title)}</span><span class="s">${esc(x.r.when)}</span>${(lenText(x.r)||travelText(x.r))?`<span class="trav">${[lenText(x.r),travelText(x.r)].filter(Boolean).join(" · ")}</span>`:""}<span>${fundBadge(x.r)}${statusPill(x.r.status,x.r)}</span></button>`).join("");
+  c.querySelectorAll(".card").forEach(b=>b.addEventListener("click",()=>openRegular(REGULAR[+b.dataset.i])));
+}
+
+const dlg=document.getElementById("dlg");
+function fill(item,rows){
+  document.getElementById("dlgHost").innerHTML=`<span class="dot" style="background:${color(item.club)}"></span>${esc(item.hosts)}`;
+  document.getElementById("dlgTitle").textContent=item.title;
+  document.getElementById("dlgStatus").innerHTML=fundBadge(item)+statusPill(item.status,item);
+  document.getElementById("dlgList").innerHTML=rows.filter(r=>r[1]).map(r=>`<dt>${r[0]}</dt><dd>${r[2]?r[1]:esc(r[1])}</dd>`).join("");
+  if(typeof dlg.showModal==="function"){dlg.showModal()}else{dlg.setAttribute("open","")}
+}
+function linkRow(u){return u?`<a href="${esc(u)}" target="_blank" rel="noopener">Source page</a>`:""}
+function openEvent(e){
+  fill(e,[["When",fmtLong(parse(e.date))+" · "+e.time],["Where",e.where],["Type",typeText(e)],["Rotary focus",focusText(e)],["Length",lenText(e)],["Distance",travelLong(e)],["Contact",e.contact],["Partner",e.partner],["Details",e.notes],["More info",linkRow(e.link),true]]);
+}
+function openRegular(r){
+  fill(r,[["When",r.when],["Where",r.where],["Type",typeText(r)],["Rotary focus",focusText(r)],["Length",lenText(r)],["Distance",travelLong(r)],["Contact",r.contact],["Partner",r.partner],["Details",r.notes],["More info",linkRow(r.link),true]]);
+}
+document.getElementById("dlgClose").addEventListener("click",()=>dlg.close?dlg.close():dlg.removeAttribute("open"));
+dlg.addEventListener("click",ev=>{if(ev.target===dlg&&dlg.close)dlg.close()});
+
+document.getElementById("prev").addEventListener("click",()=>{const n=periodRange()[2]; view.setMonth(view.getMonth()-n);renderGrid()});
+document.getElementById("next").addEventListener("click",()=>{const n=periodRange()[2]; view.setMonth(view.getMonth()+n);renderGrid()});
+
+let originKey="", maxMi=0, maxMin=0, incUnknown=true, maxHrs=0, incNoLen=true;
+const originCoords=k=>(k&&k.startsWith("zip:"))?ZIPS[k.slice(4)]:null;
+const originName=k=>k.startsWith("zip:")?"ZIP "+k.slice(4):((ORIGINS.find(x=>x.key===k)||{}).name||"your starting point");
+// Every visit starts with no ZIP and no filters. Clear anything an earlier version saved.
+try{localStorage.removeItem("svc-dist")}catch(e){}
+function travel(item){
+  const v=VENUES[item.venue], o=originCoords(originKey); if(!v||!o) return null;
+  const R=3958.8, rad=x=>x*Math.PI/180, dLat=rad(v[0]-o[0]), dLng=rad(v[1]-o[1]);
+  const a=Math.sin(dLat/2)**2+Math.cos(rad(o[0]))*Math.cos(rad(v[0]))*Math.sin(dLng/2)**2;
+  const mi=2*R*Math.asin(Math.sqrt(a))*1.3;
+  const min=Math.round(5+mi/(mi<8?28:40)*60);
+  return {mi, min};
+}
+function travelText(item){if(!originCoords(originKey)) return ""; const t=travel(item); if(!t) return "Location not fixed"; return "≈ "+t.min+" min drive";}
+function travelLong(item){if(!originCoords(originKey)) return "Enter your ZIP code above to see distance and drive time"; const t=travel(item); if(!t) return "No fixed location, so no estimate"; return travelText(item)+" from "+originName(originKey)+" (estimate)";}
+function passes(item){
+  if(myClub && scope==="mine" && !isMine(item)) return false;
+  if(!(myClub && scope==="mine") && !active.has(item.club) && !isMine(item)) return false;
+  if(activeTypes.size<Object.keys(TYPES).length && !(item.types||[]).some(t=>activeTypes.has(t))) return false;
+  if(activeFocus.size<Object.keys(FOCUS).length && !((item.focus&&item.focus.length)?item.focus:["none"]).some(f=>activeFocus.has(f))) return false;
+  if(maxHrs){ const h=item.hours; if(h==null){ if(!incNoLen) return false; } else if(maxHrs>0 ? h>maxHrs : h<=-maxHrs) return false; }
+  if(!originCoords(originKey)) return true;
+  const t=travel(item);
+  if(!t) return incUnknown || (!maxMi && !maxMin);
+  if(maxMi && t.mi>maxMi) return false;
+  if(maxMin && t.min>maxMin) return false;
+  return true;
+}
+function saveDist(){}
+const zipIn=document.getElementById("zip"), zipMsg=document.getElementById("zipMsg");
+if(originKey) zipIn.value=originKey.slice(4);
+function useZip(){
+  const z=(zipIn.value||"").trim();
+  if(z===""){zipMsg.textContent=""; originKey=""; saveDist(); renderAll(); return}
+  if(!/^\d{5}$/.test(z)){zipMsg.textContent="Enter a 5-digit ZIP code.";return}
+  if(!ZIPS[z]){zipMsg.textContent="That ZIP isn't in our Tucson-area list, so distances can't be shown for it.";return}
+  zipMsg.textContent=""; originKey="zip:"+z; saveDist(); renderAll();
+}
+document.getElementById("zipGo").addEventListener("click",useZip);
+zipIn.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();useZip()}});
+document.getElementById("maxMin").value=String(maxMin);
+document.getElementById("incUnknown").checked=incUnknown;
+document.getElementById("maxHrs").value=String(maxHrs);
+document.getElementById("incNoLen").checked=incNoLen;
+document.getElementById("maxHrs").addEventListener("change",e=>{maxHrs=+e.target.value;saveDist();renderAll()});
+document.getElementById("incNoLen").addEventListener("change",e=>{incNoLen=e.target.checked;saveDist();renderAll()});
+document.getElementById("maxMin").addEventListener("change",e=>{maxMin=+e.target.value;saveDist();renderAll()});
+document.getElementById("incUnknown").addEventListener("change",e=>{incUnknown=e.target.checked;saveDist();renderAll()});
+function lenText(item){const h=item.hours; if(h==null) return ""; if(h>=24) return "Overnight trip"; if(h<1) return Math.round(h*60)+" min"; return (Number.isInteger(h)?h:h.toFixed(1).replace(/\.0$/,""))+(h===1?" hour":" hours");}
+function syncDistControls(){document.getElementById("incNoLen").disabled=!maxHrs;const on=!!originCoords(originKey); ["maxMin","incUnknown"].forEach(id=>{document.getElementById(id).disabled=!on});}
+function typeText(item){return (item.types||[]).map(t=>(TYPES[t]||{}).name).filter(Boolean).join(", ");}
+function renderTypeFilters(){
+  const used=new Set([...EVENTS,...REGULAR].flatMap(e=>e.types||[]));
+  const f=document.getElementById("typeFilters");
+  f.innerHTML='<span class="lbl">Type:</span><button class="chip bulk" id="typeAll">Select all</button><button class="chip bulk" id="typeNone">Deselect all</button>'+
+    Object.entries(TYPES).filter(([k])=>used.has(k)).map(([k,t])=>`<button class="chip" data-t="${k}" aria-pressed="${activeTypes.has(k)}">${esc(t.name)}</button>`).join("");
+  f.querySelectorAll(".chip[data-t]").forEach(b=>b.addEventListener("click",()=>{const k=b.dataset.t; activeTypes.has(k)?activeTypes.delete(k):activeTypes.add(k); renderAll();}));
+  document.getElementById("typeAll").addEventListener("click",()=>{Object.keys(TYPES).forEach(k=>activeTypes.add(k)); renderAll();});
+  document.getElementById("typeNone").addEventListener("click",()=>{activeTypes.clear(); renderAll();});
+}
+function focusText(item){return ((item.focus&&item.focus.length)?item.focus:["none"]).map(f=>(FOCUS[f]||{}).name).filter(Boolean).join(", ");}
+function renderFocusFilters(){
+  const counts={}; [...EVENTS,...REGULAR].forEach(e=>((e.focus&&e.focus.length)?e.focus:["none"]).forEach(f=>counts[f]=(counts[f]||0)+1));
+  const f=document.getElementById("focusFilters");
+  f.innerHTML='<span class="lbl">Rotary focus:</span><button class="chip bulk" id="focusAll">Select all</button><button class="chip bulk" id="focusNone">Deselect all</button>'+
+    Object.entries(FOCUS).map(([k,t])=>{const n=counts[k]||0; return `<button class="chip" data-f="${k}" aria-pressed="${activeFocus.has(k)}"${n?"":" disabled title=\"No current projects\""}>${esc(t.name)} <span class="cnt">${n}</span></button>`}).join("");
+  f.querySelectorAll(".chip[data-f]").forEach(b=>b.addEventListener("click",()=>{const k=b.dataset.f; activeFocus.has(k)?activeFocus.delete(k):activeFocus.add(k); renderAll();}));
+  document.getElementById("focusAll").addEventListener("click",()=>{Object.keys(FOCUS).forEach(k=>activeFocus.add(k)); renderAll();});
+  document.getElementById("focusNone").addEventListener("click",()=>{activeFocus.clear(); renderAll();});
+}
+function setupDropdowns(){
+  const btns=[...document.querySelectorAll(".ddbtn")];
+  function closeAll(except){btns.forEach(b=>{if(b!==except){b.setAttribute("aria-expanded","false");document.getElementById(b.dataset.dd).hidden=true;}})}
+  btns.forEach(b=>b.addEventListener("click",e=>{e.stopPropagation(); const pop=document.getElementById(b.dataset.dd); const open=pop.hidden; closeAll(b); pop.hidden=!open; b.setAttribute("aria-expanded",String(open));}));
+  document.querySelectorAll(".pop").forEach(p=>p.addEventListener("click",e=>e.stopPropagation()));
+  document.addEventListener("click",()=>closeAll(null));
+  document.addEventListener("keydown",e=>{if(e.key==="Escape"){const openBtn=btns.find(b=>b.getAttribute("aria-expanded")==="true"); closeAll(null); if(openBtn) openBtn.focus();}});
+}
+function updateLabels(){
+  const usedClubs=new Set([...EVENTS,...REGULAR].map(e=>e.club)); const nClub=[...usedClubs].filter(k=>active.has(k)).length;
+  const usedTypes=new Set([...EVENTS,...REGULAR].flatMap(e=>e.types||[])); const nType=[...usedTypes].filter(k=>activeTypes.has(k)).length;
+  const usedFocus=new Set([...EVENTS,...REGULAR].flatMap(e=>(e.focus&&e.focus.length)?e.focus:["none"])); const nFocus=[...usedFocus].filter(k=>activeFocus.has(k)).length;
+  const set=(id,btnSel,text,on)=>{document.getElementById(id).textContent=text; document.querySelector(`[data-dd="${btnSel}"]`).classList.toggle("on",on);};
+  set("lblClub","pClub", nClub<usedClubs.size?`Clubs: ${nClub} of ${usedClubs.size}`:"Clubs", nClub<usedClubs.size);
+  set("lblType","pType", nType<usedTypes.size?`Type of service: ${nType} of ${usedTypes.size}`:"Type of service", nType<usedTypes.size);
+  set("lblFocus","pFocus", nFocus<usedFocus.size?`Rotary focus: ${nFocus} of ${usedFocus.size}`:"Rotary focus", nFocus<usedFocus.size);
+  const zipOn=!!originCoords(originKey);
+  const dLabel=(zipOn&&maxMin)?"Within "+maxMin+" min drive":"Drive time";
+  set("lblDist","pDist", dLabel, zipOn&&(maxMi||maxMin)>0);
+  set("lblLen","pLen", maxHrs?(maxHrs>0?"Up to "+maxHrs+(maxHrs===1?" hour":" hours"):"More than 4 hours"):"Length", !!maxHrs);
+  const filtered=nClub<usedClubs.size||nType<usedTypes.size||nFocus<usedFocus.size||(zipOn&&(maxMi||maxMin))||maxHrs;
+  document.getElementById("clearAll").hidden=!filtered;
+  const all=[...EVENTS.filter(e=>parse(e.date)>=today),...REGULAR].filter(x=>!(myClub&&scope==="mine")||isMine(x)); const shown=all.filter(passes).length;
+  document.getElementById("countMsg").textContent=filtered?`Showing ${shown} of ${all.length} events and projects`:`${all.length} events and projects`;
+}
+document.getElementById("clearAll").addEventListener("click",()=>{
+  Object.keys(CLUBS).forEach(k=>active.add(k)); Object.keys(TYPES).forEach(k=>activeTypes.add(k)); Object.keys(FOCUS).forEach(k=>activeFocus.add(k));
+  maxMi=0; maxMin=0; maxHrs=0; incUnknown=true; incNoLen=true;
+  document.getElementById("maxMin").value="0"; document.getElementById("maxHrs").value="0";
+  document.getElementById("incUnknown").checked=true; document.getElementById("incNoLen").checked=true;
+  saveDist(); renderAll();
+});
+setupDropdowns();
+function renderAll(){applyScope();syncDistControls();renderTypeFilters();renderFocusFilters();renderFilters();renderGrid();renderUpcoming();renderCards();updateLabels()}
+document.querySelectorAll(".sbtn").forEach(b=>b.addEventListener("click",()=>{if(!myClub)return; scope=b.dataset.scope; renderAll();}));
+renderAll();
+</script>
+</body>
+</html>
