@@ -281,7 +281,8 @@ const CLUBS = {
 const TYPES = {
   food:{name:"Food & hunger"}, youth:{name:"Kids & education"}, environment:{name:"Cleanups & environment"},
   veterans:{name:"Veterans"}, needs:{name:"Shelter & basic needs"}, health:{name:"Health"},
-  drive:{name:"Collection drives"}, fundraiser:{name:"Fundraiser volunteering"}, community:{name:"Community events"}
+  drive:{name:"Collection drives"}, fundraiser:{name:"Fundraiser volunteering"}, community:{name:"Community events"},
+  networking:{name:"Chamber & networking"}
 };
 // Rotary's seven official areas of focus, for the "Rotary focus" filter. Items list them with focus:["key", ...]; "none" = not tied to one.
 const FOCUS = {
@@ -338,6 +339,8 @@ const EVENTS = [
 ];
 // Regular / yearly projects without a set date yet.
 const REGULAR = [
+  {ownOnly:true, types:["networking"], focus:["none"], title:"Marana Mornings: Chamber networking breakfast", club:"marana", hosts:"Marana Chamber of Commerce (Rotary Club of Marana is a member)", when:"First Wednesday of each month, about 7:15 am", where:"Recently at Tucson Premium Outlets food court, 6401 Marana Center Blvd; check the Chamber's listing", contact:"Marana Chamber of Commerce", partner:"Marana Chamber of Commerce", notes:"Coffee, breakfast and business networking. A chance to represent the club in the Marana business community. Shown only in the Marana view.", link:"https://www.burbio.com/states/Arizona/Marana/marana-chamber-of-commerce", status:"ours"},
+  {ownOnly:true, types:["networking"], focus:["none"], title:"4th Tuesday Mixer: Chamber after-hours networking", club:"marana", hosts:"Marana Chamber of Commerce (Rotary Club of Marana is a member)", when:"Fourth Tuesday of each month, early evening (recent listings say 5:00–7:00 pm)", where:"Changes each month; check the Chamber's listing", contact:"Marana Chamber of Commerce", partner:"Marana Chamber of Commerce", notes:"Relaxed after-hours networking with food and a cash bar. The date sometimes moves around holidays. Shown only in the Marana view.", link:"https://www.burbio.com/states/Arizona/Marana/marana-chamber-of-commerce", status:"ours"},
   {types:["community"], focus:["none"], title:"Fifth Tuesday service project", club:"marana", hosts:"Rotary Club of Marana", when:"Months with a fifth Tuesday (next: Dec 29, 2026; Mar 30, 2027)", where:"Varies", contact:"Rotary Club of Marana", partner:"", notes:"On each fifth Tuesday the club holds a community service project or a social instead of a regular meeting. Check which it is.", link:"https://www.maranarotary.org/helps/", status:"ours"},
   {venue:"roadrunner", types:["youth"], focus:["education"], title:"Roadrunner Elementary book project", club:"marana", hosts:"Rotary Club of Marana", when:"Book presentations being scheduled", where:"Roadrunner Elementary, Marana", contact:"Josh Bayne (book stickers); Principal Kristina Brewer (student presentations)", partner:"Roadrunner Elementary", notes:"Over 300 books purchased toward a $1,000 goal; members help label books and present them to students.", link:"https://www.maranarotary.org/helps/", status:"ours"},
   {venue:"maranafb", hours:3, types:["food"], focus:["economic"], title:"Food box packing at Marana Community Food Bank", club:"dove", hosts:"Dove Mountain Rotary", when:"Several times a year, weekday mornings (e.g. Thu 10 am–1 pm)", where:"Marana Community Food Bank, Marana", contact:"Scott Parfrey, Dove Mountain Service Projects Chair", partner:"Marana Community Food Bank", notes:"The closest project to Marana. Marana members already join.", link:"https://www.dacdb.com/rotary/accounts/5500/Bulletins/72360/09-03-2026%20Bulletin.pdf", status:"unconfirmed"},
@@ -412,7 +415,7 @@ function readHash(){ const h=(location.hash||"").replace(/^#/,""); myClub=(CLUBS
 readHash();
 function applyScope(){
   const sel=document.getElementById("myClub");
-  const allItems=[...EVENTS.filter(e=>parse(e.date)>=today),...REGULAR];
+  const allItems=[...EVENTS.filter(e=>parse(e.date)>=today),...REGULAR].filter(i=>!i.ownOnly||(myClub&&i.club===myClub));
   if(!sel.dataset.filled){
     sel.innerHTML='<option value="">Choose your club…</option>'+clubKeys().sort((a,b)=>clubFull(a).localeCompare(clubFull(b))).map(k=>`<option value="${k}">${esc(clubFull(k))}</option>`).join("");
     sel.dataset.filled="1";
@@ -577,7 +580,9 @@ function travel(item){
 }
 function travelText(item){if(!originCoords(originKey)) return ""; const t=travel(item); if(!t) return "Location not fixed"; return "≈ "+t.min+" min drive";}
 function travelLong(item){if(!originCoords(originKey)) return "Enter your ZIP code above to see distance and drive time"; const t=travel(item); if(!t) return "No fixed location, so no estimate"; return travelText(item)+" from "+originName(originKey)+" (estimate)";}
+const visibleItem=i=>!i.ownOnly||(myClub&&i.club===myClub);
 function passes(item){
+  if(!visibleItem(item)) return false;
   if(myClub && scope==="mine" && !isMine(item)) return false;
   if(!(myClub && scope==="mine") && !active.has(item.club) && !isMine(item)) return false;
   if(activeTypes.size<Object.keys(TYPES).length && !(item.types||[]).some(t=>activeTypes.has(t))) return false;
@@ -654,7 +659,7 @@ function updateLabels(){
   set("lblLen","pLen", maxHrs?(maxHrs>0?"Up to "+maxHrs+(maxHrs===1?" hour":" hours"):"More than 4 hours"):"Length", !!maxHrs);
   const filtered=nClub<usedClubs.size||nType<usedTypes.size||nFocus<usedFocus.size||(zipOn&&(maxMi||maxMin))||maxHrs;
   document.getElementById("clearAll").hidden=!filtered;
-  const all=[...EVENTS.filter(e=>parse(e.date)>=today),...REGULAR].filter(x=>!(myClub&&scope==="mine")||isMine(x)); const shown=all.filter(passes).length;
+  const all=[...EVENTS.filter(e=>parse(e.date)>=today),...REGULAR].filter(x=>(!x.ownOnly||(myClub&&x.club===myClub))&&(!(myClub&&scope==="mine")||isMine(x))); const shown=all.filter(passes).length;
   document.getElementById("countMsg").textContent=filtered?`Showing ${shown} of ${all.length} events and projects`:`${all.length} events and projects`;
 }
 document.getElementById("clearAll").addEventListener("click",()=>{
