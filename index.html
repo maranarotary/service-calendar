@@ -263,7 +263,8 @@ const CLUBS = {
   "dove":        {name:"Dove Mountain",                 full:"Dove Mountain",         match:"Dove Mountain",          color:"#2f7d5b"},
   "oro":         {name:"Oro Valley",                    full:"Oro Valley",            match:"Oro Valley",             color:"#b4472f"},
   "tucson":      {name:"Rotary Club of Tucson",         full:"Tucson",        match:"Rotary Club of Tucson",  color:"#1f4e8c"},
-  "saddle":      {name:"SaddleBrooke / SB Sunrise",     full:"SaddleBrooke & SaddleBrooke Sunrise",    match:"SaddleBrooke",           color:"#7a4fa3"},
+  "saddle":      {name:"SaddleBrooke",                  full:"SaddleBrooke",                 match:"SaddleBrooke",           color:"#7a4fa3"},
+  "sbsunrise":   {name:"SaddleBrooke Sunrise",          full:"SaddleBrooke Sunrise",         match:"SaddleBrooke Sunrise",   color:"#c7782a"},
   "catalina":    {name:"Catalina (Tucson)",             full:"Catalina",              match:"Catalina",               color:"#0f8a8a"},
   "casas":       {name:"Casas Adobes",                  full:"Casas Adobes",          match:"Casas Adobes",           color:"#8a6d1f"},
   "rincon":      {name:"Rincon (Tucson)",               full:"Rincon (Tucson)",                match:"Rincon",                 color:"#5b6f8a"},
@@ -406,7 +407,7 @@ let scope="mine";
 let myClub="";
 const clubKeys=()=>Object.keys(CLUBS).filter(k=>k!=="multi"&&k!=="district");
 const clubFull=k=>(CLUBS[k]&&(CLUBS[k].full||CLUBS[k].name))||"";
-function isMine(item){ if(!myClub) return false; if(item.club===myClub) return true; const m=CLUBS[myClub]&&CLUBS[myClub].match; return !!m && (item.hosts||"").includes(m); }
+function isMine(item){ if(!myClub) return false; if(item.club===myClub) return true; const m=CLUBS[myClub]&&CLUBS[myClub].match; if(!m) return false; let h=item.hosts||""; for(const k in CLUBS){ const o=CLUBS[k].match; if(k!==myClub&&o&&o.length>m.length&&o.includes(m)) h=h.split(o).join(" "); } return h.includes(m); }
 function readHash(){ const h=(location.hash||"").replace(/^#/,""); myClub=(CLUBS[h]&&h!=="multi"&&h!=="district")?h:""; }
 readHash();
 function applyScope(){
