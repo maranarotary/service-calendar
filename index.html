@@ -180,7 +180,7 @@ footer{font-size:14px;color:var(--muted);border-top:1px solid var(--line);paddin
       <button class="sbtn" data-scope="all" aria-pressed="false" id="sbAll">Your club + partner clubs</button>
       <span class="scopehint" id="scopeHint"></span>
     </div>
-    <div class="notice" role="note" id="partnerNotice" hidden><span aria-hidden="true">⚠</span><span>Projects marked <strong>Your club</strong> are your own club's. Projects marked <strong>Check with host club</strong> come from the clubs' public websites and newsletters and haven't been confirmed yet. Contact the host club before you go.</span></div>
+    <div class="notice" role="note" id="partnerNotice" hidden><span aria-hidden="true">⚠</span><span>Other clubs' projects are gathered from their public websites and newsletters. There is no formal agreement among the clubs, and dates and details have not been confirmed. If a project interests you, contact the host club first to ask whether visiting Rotarians are welcome and to confirm the details.</span></div>
     <div class="meta" id="updated"></div>
   </header>
 
@@ -241,7 +241,7 @@ footer{font-size:14px;color:var(--muted);border-top:1px solid var(--line);paddin
     <div class="cards" id="cards"></div>
   </section>
 
-  <footer>This calendar is maintained by the Rotary Club of Marana and reviewed weekly. To suggest a project or report a change, contact the Rotary Club of Marana. Clubs can link straight to their own view by adding their club's code to the address, for example #marana or #oro.</footer>
+  <footer>This calendar is maintained by the Rotary Club of Marana and reviewed weekly. Other clubs' listings come from their public websites and newsletters; there is no formal agreement among the clubs, and details may change, so contact the host club before you go. To suggest a project or report a change, contact the Rotary Club of Marana. Clubs can link straight to their own view by adding their club's code to the address, for example #marana or #oro.</footer>
 </div>
 
 <dialog id="dlg" aria-labelledby="dlgTitle">
@@ -385,7 +385,7 @@ let view=new Date(today.getFullYear(),today.getMonth(),1);
 
 document.getElementById("updated").textContent="Last updated "+fmtLong(parse(LAST_UPDATED)).replace(/^\w+, /,"");
 
-function fundBadge(item){return (item.types||[]).includes("fundraiser")?'<span class="pill fund">Fundraiser · volunteers welcome</span> ':'';}
+function fundBadge(item){if(!(item.types||[]).includes("fundraiser"))return '';return (isMine(item)||item.status==="ours")?'<span class="pill fund">Fundraiser · volunteers welcome</span> ':'<span class="pill fund">Fundraiser</span> ';}
 function statusPill(s,item){if(item&&myClub&&isMine(item))return item.club===myClub?'<span class="pill ours">Your club</span>':'<span class="pill ours">Your club takes part</span>';if(s==="ours"||s==="confirmed")return '<span class="pill confirmed">Confirmed</span>';return '<span class="pill unconfirmed">Check with host club</span>'}
 function color(k){return (CLUBS[k]||CLUBS.multi).color}
 
@@ -432,10 +432,10 @@ function applyScope(){
   document.getElementById("partnerNotice").hidden=!(scope==="all");
   document.querySelector('[data-dd="pClub"]').parentElement.hidden=(myClub&&scope==="mine");
   document.getElementById("ledeText").textContent= !myClub
-    ? "Hands-on service projects at Rotary clubs across the Tucson area, open to visiting Rotarians. Choose your club to see your own projects first, then add partner clubs for more ways to serve."
+    ? "Service projects that Tucson-area Rotary clubs list publicly. Choose your club to see your own projects first, then add other clubs' projects for more ways to serve."
     : scope==="mine"
       ? `Service projects of ${full}, including multi-club projects it takes part in. Click any event or project for the time, place, and who to contact.`
-      : `${full}'s own service projects, plus hands-on projects at neighboring Rotary clubs that welcome visiting Rotarians. Click any event or project for the time, place, and who to contact.`;
+      : `${full}'s own service projects, plus service projects that other Tucson-area Rotary clubs list publicly. Click any event or project for the time, place, and who to contact.`;
   const partnerClubs=new Set(allItems.filter(x=>!isMine(x)).map(x=>x.club).filter(k=>k!=="multi"&&k!=="district")).size;
   document.getElementById("scopeHint").textContent= !myClub ? "" :
     scope==="mine" ? (mine? `Want more ways to serve? Add ${partnerN} projects from ${partnerClubs} partner clubs.` : `No projects are listed for ${full} yet. Add partner clubs to see ${partnerN} projects.`)
